@@ -14,6 +14,7 @@ import {
 } from 'react-native-paper';
 import {ScaledSheet} from 'react-native-size-matters';
 import Icon from '../components/common/Icon';
+import { ACTIVEPARKING, HOME } from '../constants/routeName';
 
 export const DrawerContent = props => {
   const paperTheme = useTheme();
@@ -46,7 +47,7 @@ export const DrawerContent = props => {
                 />
               )}
               label="Home"
-              onPress={() => {}}
+              onPress={() => {props.navigation.navigate(HOME)}}
             />
             <DrawerItem
               icon={({color, size}) => (
@@ -70,7 +71,7 @@ export const DrawerContent = props => {
                 />
               )}
               label="Active Parking"
-              onPress={() => {}}
+              onPress={() => {props.navigation.navigate(ACTIVEPARKING)}}
             />
             <DrawerItem
               icon={({color, size}) => (
@@ -197,3 +198,4 @@ const styles = ScaledSheet.create({
     paddingHorizontal: 16,
   },
 });
+

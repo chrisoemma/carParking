@@ -1,7 +1,8 @@
 import {createDrawerNavigator} from '@react-navigation/drawer';
-import Home from '../screens/Home';
 import React from 'react';
 import { DrawerContent } from './DrawerContent';
+import AppStack from './AppStack';
+
 
 const Drawer = createDrawerNavigator();
 
@@ -14,7 +15,7 @@ const DrawerNavigation = () => {
     }}
     drawerContent={props=><DrawerContent {...props} />}
     >
-      <Drawer.Screen name="Home" component={Home} />
+      <Drawer.Screen name="Home stack" component={AppStack} />
     </Drawer.Navigator>
   );
 };
