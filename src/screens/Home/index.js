@@ -2,10 +2,10 @@ import React from 'react';
 import {View, Text} from 'react-native';
 import HomeComponent from '../../components/HomeComponent';
 
-const Home = () => {
+const Home = ({navigation}) => {
   return (
     <View>
-      <HomeComponent />
+      <HomeComponent  navigation={navigation} />
     </View>
   );
 };

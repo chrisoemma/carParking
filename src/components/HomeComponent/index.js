@@ -17,8 +17,11 @@ import {
   BottomSheetModalProvider,
   BottomSheetBackdrop,
 } from '@gorhom/bottom-sheet';
+import { DrawerActions } from '@react-navigation/native';
 
-const HomeComponent = () => {
+
+
+const HomeComponent = ({navigation}) => {
   const bottomSheetModalRef = useRef(null);
 
   // variables
@@ -58,7 +61,9 @@ const HomeComponent = () => {
 
         <View style={styles.container}>
           <View style={styles.topNav}>
-            <TouchableOpacity style={styles.nav}>
+            <TouchableOpacity style={styles.nav}
+            onPress={()=>navigation.openDrawer()}
+            >
               <Icon
                 type="antiDesign"
                 name="bars"

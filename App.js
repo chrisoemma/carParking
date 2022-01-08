@@ -1,13 +1,11 @@
 import React from 'react';
 import {Text, View} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import Home from './src/screens/Home';
+import AppNavContainer from './src/navigations';
 const App = () => {
   return (
     <GestureHandlerRootView style={{flex: 1}}>
-      <View>
-        <Home />
-      </View>
+     <AppNavContainer />
     </GestureHandlerRootView>
   );
 };
