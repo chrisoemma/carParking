@@ -4,10 +4,6 @@ apply plugin: "com.android.application"
 
 import com.android.build.OutputFile
 
-
-
-
-    
 /**
  * The react.gradle file registers a task for each build variant (e.g. bundleDebugJsAndAssets
  * and bundleReleaseJsAndAssets).
@@ -198,11 +194,15 @@ android {
 }
 
 dependencies {
+    // implementation 'com.google.android.gms:play-services-location:18.0.1'
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
+   
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+
+
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'

@@ -47,6 +47,10 @@ export default ScaledSheet.create({
     backgroundColor: colors.primary,
     borderRadius: '10@s',
   },
+  carMarker:{
+    backgroundColor: colors.white,
+    borderRadius: '10@s',
+  },
   parkingInfo: {
     marginTop: '65%',
     padding: '15@s',
@@ -72,7 +76,7 @@ export default ScaledSheet.create({
   },
   distancePrice: {
     flexDirection: 'row',
-    marginTop: '45@s',
+    marginTop: '15@s',
     justifyContent: 'space-between',
   },
   distance: {
@@ -182,4 +186,15 @@ export default ScaledSheet.create({
     color: colors.black,
     fontWeight: 'bold',
   },
+
+  makerStyle:{
+  padding:'5@s',
+  borderRadius:'10@s',
+    backgroundColor:colors.yellow,
+    flexDirection:'row',
+    justifyContent:'center',
+    alignItems:'center',
+
+  }
+  
 });

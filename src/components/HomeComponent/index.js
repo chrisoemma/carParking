@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useRef} from 'react';
+import React, {useState, useCallback, useMemo, useRef, useEffect} from 'react';
 import {
   View,
   Text,
@@ -6,23 +6,31 @@ import {
   TouchableOpacity,
   Image,
   Button,
+  Platform,
+  Alert,
 } from 'react-native';
 import {scale} from 'react-native-size-matters';
 import colors from '../../assets/theme/colors';
 import Icon from '../common/Icon';
 import styles from './styles';
-import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
+import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import {
   BottomSheetModal,
   BottomSheetModalProvider,
   BottomSheetBackdrop,
 } from '@gorhom/bottom-sheet';
-import { DrawerActions } from '@react-navigation/native';
-
-
+import {mapStyle} from '../common/mapStyles';
+import Geolocation from 'react-native-geolocation-service';
+import {request, PERMISSIONS} from 'react-native-permissions';
+import {parkingInfo} from '../../context/data';
 
 const HomeComponent = ({navigation}) => {
+  const [position, setPosition] = useState({});
+
+  const [markerContent, setMarkerContent] = useState(parkingInfo[0]);
   const bottomSheetModalRef = useRef(null);
+
+  const _map = useRef(1);
 
   // variables
   const snapPoints = useMemo(() => ['25%', '97%'], []);
@@ -44,26 +52,109 @@ const HomeComponent = ({navigation}) => {
     [],
   );
 
+  const locateCurrentPosition = () => {
+    Geolocation.getCurrentPosition(
+      position => {
+        let initialPosition = {
+          latitude: parseFloat(position.coords.latitude),
+          longitude: parseFloat(position.coords.longitude),
+          latitudeDelta: 0.08,
+          longitudeDelta: 0.08,
+        };
+        setPosition(initialPosition);
+      },
+      error => {
+        // See error code charts below.
+        Alert.alert(error.message);
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    );
+  };
+
+  useEffect(() => {
+    requestLocationPermission();
+  }, []);
+
+  const requestLocationPermission = async () => {
+    if (Platform.OS === 'ios') {
+      var response = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+      if (response === 'granted') {
+        locateCurrentPosition();
+      }
+    } else {
+      var response = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+      if (response === 'granted') {
+        locateCurrentPosition();
+        console.log('Android', response);
+      }
+    }
+  };
+
+  const onRegionChange = () => {
+    setPosition(position);
+  };
+
+  const changeMakerContent = index => {
+    let location = parkingInfo[index];
+
+    setMarkerContent(location);
+  };
+
   return (
     <>
       <View style={styles.wrapper}>
         <View style={styles.mapDiv}>
           <MapView
+            ref={_map}
             style={styles.map}
-            region={{
-              latitude: 37.78825,
-              longitude: -122.4324,
-              latitudeDelta: 0.015,
-              longitudeDelta: 0.0121,
-            }}
-          />
+            customMapStyle={mapStyle}
+            showsUserLocation={true}
+            followsUserLocation={true}
+            rotateEnabled={true}
+            zoomEnabled={true}
+            toolbarEnabled={true}
+            onRegionChange={onRegionChange}>
+            {parkingInfo.map((marker, index) => (
+              <TouchableOpacity key={marker.name}>
+                <Marker
+                  onPress={() => changeMakerContent(index)}
+                  coordinate={{
+                    latitude: marker.latitude,
+                    longitude: marker.longitude,
+                  }}>
+                  <View style={styles.makerStyle}>
+                    <View style={styles.carMarker}>
+                      <Icon
+                        type="fontAwesome5"
+                        name="car-alt"
+                        size={scale(22)}
+                        color={colors.black}
+                        style={{padding: scale(5)}}
+                      />
+                    </View>
+                    <View>
+                      <Text
+                        style={{
+                          fontWeight: 'bold',
+                          marginLeft: 5,
+                          fontSize: scale(16),
+                          color: colors.black,
+                        }}>
+                        ${marker.price}
+                      </Text>
+                    </View>
+                  </View>
+                </Marker>
+              </TouchableOpacity>
+            ))}
+          </MapView>
         </View>
 
         <View style={styles.container}>
           <View style={styles.topNav}>
-            <TouchableOpacity style={styles.nav}
-            onPress={()=>navigation.openDrawer()}
-            >
+            <TouchableOpacity
+              style={styles.nav}
+              onPress={() => navigation.openDrawer()}>
               <Icon
                 type="antiDesign"
                 name="bars"
@@ -93,7 +184,7 @@ const HomeComponent = ({navigation}) => {
             style={styles.parkingInfo}
             onPress={handlePresentModalPress}>
             <View style={styles.textInfo}>
-              <Text style={styles.name}>Mwenge parking</Text>
+              <Text style={styles.name}>{markerContent.name}</Text>
               <Text style={styles.street}>555 mwenge. Mjengoni </Text>
               <View style={styles.distancePrice}>
                 <View style={styles.distance}>
@@ -125,7 +216,7 @@ const HomeComponent = ({navigation}) => {
                       marginTop: scale(3),
                       marginLeft: scale(5),
                     }}>
-                    Tsh 6/h
+                    ${markerContent.price}/h
                   </Text>
                 </View>
               </View>
@@ -186,12 +277,15 @@ const HomeComponent = ({navigation}) => {
                 <View style={styles.specificMap}>
                   <MapView
                     style={styles.parkingSpotMap}
-                    region={{
-                      latitude: 37.78825,
-                      longitude: -122.4324,
-                      latitudeDelta: 0.015,
-                      longitudeDelta: 0.0121,
-                    }}
+                    // region={{
+                    //   latitude: 37.78825,
+                    //   longitude: -122.4324,
+                    //   latitudeDelta: 0.015,
+                    //   longitudeDelta: 0.0121,
+                    // }}
+                    showsUserLocation={true}
+                    followsUserLocation={true}
+                    customMapStyle={mapStyle}
                   />
                 </View>
                 <View style={styles.areaInfo}>
